@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://hlw7x7n7m8u6"]
+
+[ext_resource type="Script" uid="uid://ydogaql2phx8" path="res://scripts/visualizers/box_visualizer/ValueBox.cs" id="1_pnanr"]
+
+[node name="ValueBox" type="ColorRect" unique_id=1217809557]
+custom_minimum_size = Vector2(100, 100)
+anchors_preset = -1
+anchor_right = 0.08680555
+anchor_bottom = 0.15432099
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_pnanr")
+metadata/_edit_use_anchors_ = true

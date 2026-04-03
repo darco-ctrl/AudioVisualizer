@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://cvdwdrxq2fi6o"]
+
+[ext_resource type="Script" uid="uid://du1a3euj76kyn" path="res://scripts/main/Main.cs" id="1_hyk8p"]
+[ext_resource type="PackedScene" uid="uid://b7prjum61hkdv" path="res://scenes/visualizers/box_visualizers/box_visualizer.tscn" id="2_iuonh"]
+
+[node name="Main" type="Node3D" unique_id=2091893445]
+script = ExtResource("1_hyk8p")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1183034580]
+
+[node name="Control" parent="CanvasLayer" unique_id=1026624548 instance=ExtResource("2_iuonh")]
