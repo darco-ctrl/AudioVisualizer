@@ -24,15 +24,7 @@ public partial class BoxVisualizer : Control
 		
 	}
 
-	private void Capture_DataAvailable(Object _sender, WaveInEventArgs _eventArgs)
-	{
-		int sampleCount = _eventArgs.BytesRecorded / 4;
 
-		for (int i = 0; i < sampleCount; i++)
-		{
-			float sample = BitConverter.ToSingle(_eventArgs.Buffer, i * 4);
-		}
-	}
 
 	private void MakeValueBoxes()
 	{
