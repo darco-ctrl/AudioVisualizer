@@ -14,20 +14,15 @@ public partial class SampleData : Node
 
 	public float[] Samples;
 
-	private WaveInEvent WaveIn;
+	private WasapiLoopbackCapture Capture;
 
 	public override void _Ready()
 	{
 		Samples = new float[RingBuffer];
 
-		WaveIn = new WaveInEvent(); // make new listner
-
-		WaveIn.WaveFormat = new WaveFormat(44099, 1); // tell it to recored at 44099 samples per second
-
-		WaveIn.DataAvailable += Capture_DataAvailable; // Says to call Capture DataAvailable when new one aavaiable
-
-		//Starts the recording 
-		WaveIn.StartRecording();
+		Capture = new WasapiLoopbackCapture();
+		Capture.DataAvailable += Capture_DataAvailable;
+		Capture.StartRecording();
 	}
 
 	private void Capture_DataAvailable(Object _sender, WaveInEventArgs _eventArgs)
@@ -59,12 +54,16 @@ public partial class SampleData : Node
 	{
 	}
 
-    public override void _EnterTree()
+    public override void _ExitTree()
     {
         GD.Print("Exiting . . .");
 
-		WaveIn.StopRecording();
-		WaveIn.Dispose();
+		if (Capture != null)
+		{
+			Capture.StopRecording();
+			Capture.Dispose();
+		}
+		
     }
 
 }

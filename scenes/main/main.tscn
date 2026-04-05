@@ -1,11 +1,20 @@
 [gd_scene format=3 uid="uid://cvdwdrxq2fi6o"]
 
 [ext_resource type="Script" uid="uid://du1a3euj76kyn" path="res://scripts/main/Main.cs" id="1_hyk8p"]
-[ext_resource type="PackedScene" uid="uid://b7prjum61hkdv" path="res://scenes/visualizers/box_visualizers/box_visualizer.tscn" id="2_iuonh"]
+[ext_resource type="PackedScene" uid="uid://bam4hf7uoi8ih" path="res://scenes/visualizers/waveform/waveform_visualizer.tscn" id="2_iuonh"]
 
 [node name="Main" type="Node3D" unique_id=2091893445]
 script = ExtResource("1_hyk8p")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1183034580]
 
-[node name="Control" parent="CanvasLayer" unique_id=1026624548 instance=ExtResource("2_iuonh")]
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=2055755725]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.7058824, 0.7058824, 0.7058824, 1)
+
+[node name="Waveform_Visualizer" parent="CanvasLayer/ColorRect" unique_id=1758657102 instance=ExtResource("2_iuonh")]
+layout_mode = 1
