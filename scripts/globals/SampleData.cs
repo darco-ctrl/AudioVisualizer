@@ -8,6 +8,7 @@ using System.Numerics;
 using NWindow = MathNet.Numerics.Window;
 using NFourier = MathNet.Numerics.IntegralTransforms.Fourier;
 using MathNet.Numerics.IntegralTransforms;
+using NAudio.MediaFoundation;
 
 public partial class SampleData : Node
 {
@@ -22,7 +23,11 @@ public partial class SampleData : Node
 
 	readonly double[] _window = NWindow.Hann(FFT_SIZE);
 
-	private WasapiLoopbackCapture Capture;
+	private WasapiLoopbackCapture capture;
+
+	private float[] spectrum = new float[FFT_SIZE / 2];
+
+	private Complex[] fftBuffer = new Complex[FFT_SIZE];
 
 	private int writeIndex = 0;
 	private int framePos = 0;
@@ -34,9 +39,9 @@ public partial class SampleData : Node
 		samples = new float[RING_BUFFER];
 		frame = new float[FFT_SIZE];
 
-		Capture = new WasapiLoopbackCapture();
-		Capture.DataAvailable += Capture_DataAvailable;
-		Capture.StartRecording();
+		capture = new WasapiLoopbackCapture();
+		capture.DataAvailable += Capture_DataAvailable;
+		capture.StartRecording();
 	}
 
 	private void Capture_DataAvailable(Object _sender, WaveInEventArgs _eventArgs)
@@ -67,7 +72,6 @@ public partial class SampleData : Node
 			}
 		}
 	}
-
 	
 
 	private void FFTProcess()
@@ -75,7 +79,8 @@ public partial class SampleData : Node
 		queuedFFT = false;
 
 		double[] window = _window;
-		var fftBuffer = new Complex[FFT_SIZE];
+		
+		
 
 		for (int i = 0; i < FFT_SIZE; i++)
 		{
@@ -87,6 +92,12 @@ public partial class SampleData : Node
 
 		NFourier.Forward(fftBuffer, FourierOptions.Matlab);
 		
+		for (int i = 0; i < FFT_SIZE / 2; i++)
+		{
+			spectrum[i] = (float)fftBuffer[i].Magnitude;
+		}
+
+		
 	}
 
 	public float[] GetSamples()
@@ -94,6 +105,14 @@ public partial class SampleData : Node
 		lock (LockObject)
 		{
 			return samples.ToArray();
+		}
+	}
+
+	public float[] GetSpectrum()
+	{
+		lock (LockObject)
+		{
+			return spectrum.ToArray();
 		}
 	}
 
@@ -107,10 +126,10 @@ public partial class SampleData : Node
     {
         GD.Print("Exiting . . .");
 
-		if (Capture != null)
+		if (capture != null)
 		{
-			Capture.StopRecording();
-			Capture.Dispose();
+			capture.StopRecording();
+			capture.Dispose();
 		}
 		
     }
