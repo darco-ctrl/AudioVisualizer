@@ -116,6 +116,11 @@ public partial class SampleData : Node
 		}
 	}
 
+	public float BinToHz(int bin)
+	{
+		return (float)bin * capture.WaveFormat.SampleRate / FFT_SIZE;
+	}
+
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{

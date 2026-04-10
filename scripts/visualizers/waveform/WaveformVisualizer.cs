@@ -2,13 +2,14 @@ using Godot;
 using System;
 using NAudio.Wave;
 
-[GlobalClass]
 public partial class WaveformVisualizer : Control
 {
 	
 	private GlobalManager GM;
 
 	private float[] Waveform;
+
+	//[Export] private CanvasData canvasData; 
 
 	private Vector2 CanvasSize = new Vector2(1152, 648);
 	private Vector2 GraphSize = new Vector2(1100, 648);
