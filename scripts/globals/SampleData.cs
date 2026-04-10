@@ -13,21 +13,21 @@ using NAudio.MediaFoundation;
 public partial class SampleData : Node
 {
 
-	public const int RING_BUFFER = 1024;
-	public const int FFT_SIZE = 2048;
+	public readonly int RING_BUFFER = 1024;
+	public readonly int FFT_SIZE = 2048;
 
 	private readonly object LockObject = new object();
 
 	private float[] samples;
 	private float[] frame;
 
-	readonly double[] _window = NWindow.Hann(FFT_SIZE);
+	readonly double[] _window = NWindow.Hann(2048);
 
 	private WasapiLoopbackCapture capture;
 
-	private float[] spectrum = new float[FFT_SIZE / 2];
+	private float[] spectrum = new float[2048 / 2];
 
-	private Complex[] fftBuffer = new Complex[FFT_SIZE];
+	private Complex[] fftBuffer = new Complex[2048];
 
 	private int writeIndex = 0;
 	private int framePos = 0;

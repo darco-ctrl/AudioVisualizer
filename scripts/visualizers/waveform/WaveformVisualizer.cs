@@ -9,10 +9,10 @@ public partial class WaveformVisualizer : Control
 
 	private float[] Waveform;
 
-	//[Export] private CanvasData canvasData; 
+	[Export] private CanvasData canvasData; 
 
-	private Vector2 CanvasSize = new Vector2(1152, 648);
-	private Vector2 GraphSize = new Vector2(1100, 648);
+	//private Vector2 canvasData.canvasData.CanvasSize = new Vector2(1152, 648);
+	//private Vector2 GraphSize = new Vector2(1100, 648);
 
 	private float XOffset;
 	private float GraphSizeYHalf;
@@ -25,9 +25,9 @@ public partial class WaveformVisualizer : Control
 	{
 		GM = GetNode<GlobalManager>("/root/GlobalManager");
 
-		GraphSizeYHalf = GraphSize.Y / 2;
+		GraphSizeYHalf = canvasData.GraphSize.Y / 2;
 
-		XOffset = (CanvasSize.X - GraphSize.X) / 2; 
+		XOffset = (canvasData.CanvasSize.X - canvasData.GraphSize.X) / 2; 
 
 	}
 	
@@ -45,7 +45,7 @@ public partial class WaveformVisualizer : Control
 		if (Waveform == null) return;
 
 		DrawRect(
-			new Rect2(0, 0, CanvasSize.X , CanvasSize.Y), 
+			new Rect2(0, 0, canvasData.CanvasSize.X , canvasData.CanvasSize.Y), 
 			new Color(0.7f, 0.7f, 0.7f, 1), // black background
 			true // filled
 		);
@@ -55,11 +55,11 @@ public partial class WaveformVisualizer : Control
 			// points (x, y) 
 
 
-			float x1 = (float)i / WaveformMax * GraphSize.X + XOffset;
+			float x1 = (float)i / WaveformMax * canvasData.GraphSize.X + XOffset;
 			float y1 = Waveform[i] * -GraphSizeYHalf + GraphSizeYHalf;
 
-			float x2 = (float)(i + 1) / WaveformMax * GraphSize.X + XOffset;
-			float y2 = Waveform[i + 1] * - GraphSizeYHalf + GraphSizeYHalf;
+			float x2 = (float)(i + 1) / WaveformMax * canvasData.GraphSize.X + XOffset;
+			float y2 = Waveform[i + 1] * -GraphSizeYHalf + GraphSizeYHalf;
 
 			
 
@@ -77,7 +77,7 @@ public partial class WaveformVisualizer : Control
     }
 
 	private void UpdateWaveform()
-	{
+	{	
 		
 		Waveform = GM.Audio.GetSamples();
 		WaveformMax = Waveform.Length - 1;

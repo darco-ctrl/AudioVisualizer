@@ -4,7 +4,7 @@ using System;
 public partial class AudioManager : Node
 {
 	
-	private SampleData _SampleData;
+	public SampleData _SampleData;
 	
 	public override void _Ready()
 	{
@@ -19,5 +19,15 @@ public partial class AudioManager : Node
 	public float[] GetSamples()
 	{
 		return _SampleData.GetSamples();
+	}
+
+	public float[] GetSpectrum()
+	{
+		return _SampleData.GetSpectrum();
+	}
+
+	public int GET_FFT_SIZE()
+	{
+		return _SampleData.FFT_SIZE;
 	}
 }

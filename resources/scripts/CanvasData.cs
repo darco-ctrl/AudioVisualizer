@@ -1,6 +1,11 @@
 using Godot;
 using System;
 
-public partial class canvas_data : Resource
+[GlobalClass]
+public partial class CanvasData : Resource
 {
+    [Export] public Vector2 CanvasSize;
+    [Export] public Vector2 GraphSize;
+
+    
 }

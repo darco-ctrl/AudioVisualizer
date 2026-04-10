@@ -5,5 +5,5 @@
 [resource]
 script = ExtResource("1_3gco4")
 CanvasSize = Vector2(1152, 648)
-GraphSize = Vector2(1100, 648)
+GraphSize = Vector2(1100, 600)
 metadata/_custom_type_script = "uid://dpuafwlm0kh7q"
