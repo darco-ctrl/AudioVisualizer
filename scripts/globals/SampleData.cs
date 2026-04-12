@@ -15,6 +15,7 @@ public partial class SampleData : Node
 
 	public readonly int RING_BUFFER = 1024;
 	public readonly int FFT_SIZE = 2048;
+	public readonly float MAX_SPECTRUM_MAGNITUDE = 100f;
 
 	private readonly object LockObject = new object();
 
@@ -23,7 +24,7 @@ public partial class SampleData : Node
 
 	readonly double[] _window = NWindow.Hann(2048);
 
-	private WasapiLoopbackCapture capture;
+	public WasapiLoopbackCapture Capture;
 
 	private float[] spectrum = new float[2048 / 2];
 
@@ -34,14 +35,16 @@ public partial class SampleData : Node
 
 	private bool queuedFFT = false;
 
+
+
 	public override void _Ready()
 	{
 		samples = new float[RING_BUFFER];
 		frame = new float[FFT_SIZE];
 
-		capture = new WasapiLoopbackCapture();
-		capture.DataAvailable += Capture_DataAvailable;
-		capture.StartRecording();
+		Capture = new WasapiLoopbackCapture();
+		Capture.DataAvailable += Capture_DataAvailable;
+		Capture.StartRecording();
 	}
 
 	private void Capture_DataAvailable(Object _sender, WaveInEventArgs _eventArgs)
@@ -62,7 +65,7 @@ public partial class SampleData : Node
 				if (framePos >= FFT_SIZE)
 				{
 					queuedFFT = true;
-					framePos = 0;
+					framePos = 0;	
 				}
 			}
 
@@ -94,10 +97,16 @@ public partial class SampleData : Node
 		
 		for (int i = 0; i < FFT_SIZE / 2; i++)
 		{
-			spectrum[i] = (float)fftBuffer[i].Magnitude;
+			float mag = (float)fftBuffer[i].Magnitude;
+			spectrum[i] = NormalizeMagnitude(mag);
 		}
 
 		
+	}
+
+	private float NormalizeMagnitude(float magnitude)
+	{
+		return Mathf.Clamp(magnitude / MAX_SPECTRUM_MAGNITUDE, 0f, 1f);
 	}
 
 	public float[] GetSamples()
@@ -116,12 +125,6 @@ public partial class SampleData : Node
 		}
 	}
 
-	public float BinToHz(int bin)
-	{
-		return (float)bin * capture.WaveFormat.SampleRate / FFT_SIZE;
-	}
-
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
 		
@@ -131,10 +134,10 @@ public partial class SampleData : Node
     {
         GD.Print("Exiting . . .");
 
-		if (capture != null)
+		if (Capture != null)
 		{
-			capture.StopRecording();
-			capture.Dispose();
+			Capture.StopRecording();
+			Capture.Dispose();
 		}
 		
     }

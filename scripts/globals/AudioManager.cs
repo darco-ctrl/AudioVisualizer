@@ -30,4 +30,9 @@ public partial class AudioManager : Node
 	{
 		return _SampleData.FFT_SIZE;
 	}
+
+	public float BinToHz (int bin)
+	{
+		return (float)bin * _SampleData.Capture.WaveFormat.SampleRate / GET_FFT_SIZE();
+	}
 }

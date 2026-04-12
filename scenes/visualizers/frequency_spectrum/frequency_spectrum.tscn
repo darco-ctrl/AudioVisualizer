@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://8ucmqq4ja3o7"]
 
 [ext_resource type="Script" uid="uid://5ngk5oer2xts" path="res://scenes/visualizers/frequency_spectrum/FrequencySpectrum.cs" id="1_2rwq5"]
+[ext_resource type="Resource" uid="uid://b5gd1ivqw44da" path="res://resources/datas/graph_canvas_data.tres" id="2_nlogc"]
 
 [node name="FrequencySpectrum" type="Control" unique_id=81261221]
 layout_mode = 3
@@ -10,3 +11,11 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_2rwq5")
+canvasData = ExtResource("2_nlogc")
+
+[node name="Label" type="Label" parent="." unique_id=1703155576]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "Spectrum Visualizer"
