@@ -9,9 +9,9 @@ public partial class FrequencySpectrum : Control
 
 	[Export] private CanvasData canvasData;
 
-	
-
 	private float[] spectrum;
+	private float[] leftSpectrum;
+	private float[] rightSpectrum;
 
 	private float XOffset = 0;
 	private float CenterX = 0;
@@ -74,6 +74,7 @@ public partial class FrequencySpectrum : Control
 	public void UpdateSpectrum()
 	{
 		spectrum = GM.Audio.GetSpectrum();
+		
 	}
 
 }

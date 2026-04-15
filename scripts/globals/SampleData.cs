@@ -14,21 +14,23 @@ public partial class SampleData : Node
 {
 
 	public readonly int RING_BUFFER = 1024;
-	public readonly int FFT_SIZE = 2048;
-	public readonly float MAX_SPECTRUM_MAGNITUDE = 100f;
+	public readonly int FFT_SIZE = 1024;
+	public readonly float MAX_SPECTRUM_MAGNITUDE = 10f;
 
 	private readonly object LockObject = new object();
 
 	private float[] samples;
 	private float[] frame;
 
-	readonly double[] _window = NWindow.Hann(2048);
+	private double[] _window;
 
 	public WasapiLoopbackCapture Capture;
 
-	private float[] spectrum = new float[2048 / 2];
+	private float[] spectrum;
+	public float[] LeftSpectrum;
+	public float[] RightSpectrum;
 
-	private Complex[] fftBuffer = new Complex[2048];
+	private Complex[] fftBuffer;
 
 	private int writeIndex = 0;
 	private int framePos = 0;
@@ -39,8 +41,18 @@ public partial class SampleData : Node
 
 	public override void _Ready()
 	{
+		_window =  NWindow.Hann(RING_BUFFER);
+
 		samples = new float[RING_BUFFER];
+
 		frame = new float[FFT_SIZE];
+
+		spectrum = new float[FFT_SIZE / 2];
+
+		LeftSpectrum = new float[FFT_SIZE / 4];
+		RightSpectrum = new float[FFT_SIZE / 4];
+
+		fftBuffer = new Complex[FFT_SIZE];
 
 		Capture = new WasapiLoopbackCapture();
 		Capture.DataAvailable += Capture_DataAvailable;
@@ -80,10 +92,12 @@ public partial class SampleData : Node
 	private void FFTProcess()
 	{
 		queuedFFT = false;
+		
+		bool isValueLeft = true;
+		int leftSpectrumIndex = 0;
+		int rightSpectrumIndex = 0;
 
 		double[] window = _window;
-		
-		
 
 		for (int i = 0; i < FFT_SIZE; i++)
 		{
@@ -97,8 +111,19 @@ public partial class SampleData : Node
 		
 		for (int i = 0; i < FFT_SIZE / 2; i++)
 		{
-			float mag = (float)fftBuffer[i].Magnitude;
-			spectrum[i] = NormalizeMagnitude(mag);
+			float mag = NormalizeMagnitude((float)fftBuffer[i].Magnitude);
+
+			spectrum[i] = mag;
+
+			if (isValueLeft)
+			{
+				LeftSpectrum[leftSpectrumIndex++] = mag;
+			} else
+			{
+				RightSpectrum[rightSpectrumIndex++] = mag;
+			}
+
+			isValueLeft = !isValueLeft;
 		}
 
 		
@@ -124,6 +149,7 @@ public partial class SampleData : Node
 			return spectrum.ToArray();
 		}
 	}
+
 
 	public override void _Process(double delta)
 	{

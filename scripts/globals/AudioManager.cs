@@ -35,4 +35,9 @@ public partial class AudioManager : Node
 	{
 		return (float)bin * _SampleData.Capture.WaveFormat.SampleRate / GET_FFT_SIZE();
 	}
+
+	public float[] GetLeftSpectrum()
+	{
+		return _SampleData.LeftSpectrum;
+	}
 }
