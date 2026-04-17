@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Dynamic;
 
 public partial class AudioManager : Node
 {
@@ -18,12 +19,7 @@ public partial class AudioManager : Node
 
 	public float[] GetSamples()
 	{
-		return _SampleData.GetSamples();
-	}
-
-	public float[] GetSpectrum()
-	{
-		return _SampleData.GetSpectrum();
+		return _SampleData.Samples;
 	}
 
 	public int GET_FFT_SIZE()
@@ -39,5 +35,15 @@ public partial class AudioManager : Node
 	public float[] GetLeftSpectrum()
 	{
 		return _SampleData.LeftSpectrum;
+	}
+
+	public float[] GetRightSpectrum()
+	{
+		return _SampleData.RightSpectrum;
+	}
+
+	public int GetSingleChannelLength()
+	{
+		return _SampleData.SINGLE_CHANNEL_LENGTH;
 	}
 }

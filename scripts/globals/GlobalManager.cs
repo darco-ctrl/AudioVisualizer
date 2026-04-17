@@ -1,5 +1,7 @@
 using Godot;
 using System;
+using System.Linq;
+using System.Text;
 
 public partial class GlobalManager : Node
 {
@@ -15,4 +17,6 @@ public partial class GlobalManager : Node
 	public override void _Process(double delta)
 	{
 	}
+
+
 }

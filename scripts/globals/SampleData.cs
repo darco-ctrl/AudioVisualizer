@@ -15,44 +15,47 @@ public partial class SampleData : Node
 
 	public readonly int RING_BUFFER = 1024;
 	public readonly int FFT_SIZE = 1024;
-	public readonly float MAX_SPECTRUM_MAGNITUDE = 10f;
+	public readonly float MAX_SPECTRUM_MAGNITUDE = 50f;
+	public int SINGLE_CHANNEL_LENGTH;
 
 	private readonly object LockObject = new object();
 
-	private float[] samples;
-	private float[] frame;
+	public float[] Samples;
+	private float[] frameLeft;
+	private float[] frameRight;
 
 	private double[] _window;
 
 	public WasapiLoopbackCapture Capture;
 
-	private float[] spectrum;
 	public float[] LeftSpectrum;
 	public float[] RightSpectrum;
 
-	private Complex[] fftBuffer;
+	private Complex[] fftBufferLeft;
+	private Complex[] fftBufferRight;
 
 	private int writeIndex = 0;
-	private int framePos = 0;
+	private int framePosLeft = 0;
+	private int framePosRight = 0;
 
 	private bool queuedFFT = false;
 
-
-
 	public override void _Ready()
 	{
-		_window =  NWindow.Hann(RING_BUFFER);
+		SINGLE_CHANNEL_LENGTH = FFT_SIZE / 2;
 
-		samples = new float[RING_BUFFER];
+		_window = NWindow.Hann(FFT_SIZE);
 
-		frame = new float[FFT_SIZE];
+		Samples = new float[RING_BUFFER];
 
-		spectrum = new float[FFT_SIZE / 2];
+		frameLeft = new float[FFT_SIZE];
+		frameRight = new float[FFT_SIZE];
 
-		LeftSpectrum = new float[FFT_SIZE / 4];
-		RightSpectrum = new float[FFT_SIZE / 4];
+		LeftSpectrum = new float[SINGLE_CHANNEL_LENGTH];
+		RightSpectrum = new float[SINGLE_CHANNEL_LENGTH];
 
-		fftBuffer = new Complex[FFT_SIZE];
+		fftBufferLeft = new Complex[FFT_SIZE];
+		fftBufferRight = new Complex[FFT_SIZE];
 
 		Capture = new WasapiLoopbackCapture();
 		Capture.DataAvailable += Capture_DataAvailable;
@@ -64,20 +67,23 @@ public partial class SampleData : Node
 		int sampleCount = _eventArgs.BytesRecorded / 4;
 
 		lock (LockObject) {
-			for (int i = 0; i < sampleCount; i++)
+			for (int i = 0; i < sampleCount; i += 2)
 			{
-				float sample = BitConverter.ToSingle(_eventArgs.Buffer, i * 4);
+				float left  = BitConverter.ToSingle(_eventArgs.Buffer, i * 4);
+				float right = BitConverter.ToSingle(_eventArgs.Buffer, (i + 1) * 4);
 
-				samples[writeIndex] = sample;
-
+				// ring buffer gets mono mix for waveform display
+				Samples[writeIndex] = (left + right) * 0.5f;
 				writeIndex = (writeIndex + 1) % RING_BUFFER;
 
-				frame[framePos++] = sample;
+				frameLeft[framePosLeft++]   = left;
+				frameRight[framePosRight++] = right;
 
-				if (framePos >= FFT_SIZE)
+				if (framePosLeft >= FFT_SIZE)
 				{
 					queuedFFT = true;
-					framePos = 0;	
+					framePosLeft  = 0;
+					framePosRight = 0;
 				}
 			}
 
@@ -87,46 +93,27 @@ public partial class SampleData : Node
 			}
 		}
 	}
-	
 
 	private void FFTProcess()
 	{
 		queuedFFT = false;
-		
-		bool isValueLeft = true;
-		int leftSpectrumIndex = 0;
-		int rightSpectrumIndex = 0;
 
 		double[] window = _window;
 
 		for (int i = 0; i < FFT_SIZE; i++)
 		{
-			frame[i] = frame[i] * (float)window[i];
-
-			fftBuffer[i] = new Complex(frame[i], 0);
-
+			fftBufferLeft[i]  = new Complex(frameLeft[i]  * window[i], 0);
+			fftBufferRight[i] = new Complex(frameRight[i] * window[i], 0);
 		}
 
-		NFourier.Forward(fftBuffer, FourierOptions.Matlab);
-		
+		NFourier.Forward(fftBufferLeft,  FourierOptions.Matlab);
+		NFourier.Forward(fftBufferRight, FourierOptions.Matlab);
+
 		for (int i = 0; i < FFT_SIZE / 2; i++)
 		{
-			float mag = NormalizeMagnitude((float)fftBuffer[i].Magnitude);
-
-			spectrum[i] = mag;
-
-			if (isValueLeft)
-			{
-				LeftSpectrum[leftSpectrumIndex++] = mag;
-			} else
-			{
-				RightSpectrum[rightSpectrumIndex++] = mag;
-			}
-
-			isValueLeft = !isValueLeft;
+			LeftSpectrum[i]  = NormalizeMagnitude((float)fftBufferLeft[i].Magnitude);
+			RightSpectrum[i] = NormalizeMagnitude((float)fftBufferRight[i].Magnitude);
 		}
-
-		
 	}
 
 	private float NormalizeMagnitude(float magnitude)
@@ -138,34 +125,22 @@ public partial class SampleData : Node
 	{
 		lock (LockObject)
 		{
-			return samples.ToArray();
+			return Samples.ToArray();
 		}
 	}
-
-	public float[] GetSpectrum()
-	{
-		lock (LockObject)
-		{
-			return spectrum.ToArray();
-		}
-	}
-
 
 	public override void _Process(double delta)
 	{
-		
 	}
 
-    public override void _ExitTree()
-    {
-        GD.Print("Exiting . . .");
+	public override void _ExitTree()
+	{
+		GD.Print("Exiting . . .");
 
 		if (Capture != null)
 		{
 			Capture.StopRecording();
 			Capture.Dispose();
 		}
-		
-    }
-
+	}
 }
