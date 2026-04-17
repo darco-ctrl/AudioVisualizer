@@ -1,4 +1,5 @@
 using Godot;
+using NAudio.Wave;
 using System;
 
 public partial class BoxVisualizer : Control
@@ -20,7 +21,10 @@ public partial class BoxVisualizer : Control
 	
 	public override void _Process(double delta)
 	{
+		
 	}
+
+
 
 	private void MakeValueBoxes()
 	{

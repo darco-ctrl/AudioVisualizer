@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="CanvasData" format=3 uid="uid://b5gd1ivqw44da"]
+
+[ext_resource type="Script" uid="uid://dpuafwlm0kh7q" path="res://resources/scripts/CanvasData.cs" id="1_3gco4"]
+
+[resource]
+script = ExtResource("1_3gco4")
+CanvasSize = Vector2(1152, 648)
+GraphSize = Vector2(1100, 600)
+metadata/_custom_type_script = "uid://dpuafwlm0kh7q"
