@@ -1,5 +1,9 @@
 [gd_scene format=3 uid="uid://c6t071gicpkry"]
 
+[ext_resource type="Script" uid="uid://bv32yi0fqnfqu" path="res://scripts/visualizers/bar_visualizer/BarVisualizer.cs" id="1_s00y1"]
+[ext_resource type="Script" uid="uid://bcmmdyvx3vnk6" path="res://scripts/visualizers/bar_visualizer/Stacker.cs" id="2_meu12"]
+[ext_resource type="Script" uid="uid://da03f6j7ov27g" path="res://scenes/visualizers/bar_visualizer/Options.cs" id="3_meu12"]
+
 [node name="BarVisualizer" type="Control" unique_id=2096243372]
 layout_mode = 3
 anchors_preset = 15
@@ -7,3 +11,65 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_s00y1")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=508730943]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.24550089, 0.24550089, 0.24550086, 1)
+
+[node name="stacker" type="Control" parent="." unique_id=1451903869]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -541.0
+offset_top = -282.5
+offset_right = 541.0
+offset_bottom = 282.5
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_meu12")
+
+[node name="ColorRect" type="ColorRect" parent="stacker" unique_id=825618870]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Options" type="Control" parent="." unique_id=1774291882 node_paths=PackedStringArray("OptionsButton")]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -35.0
+offset_top = -324.0
+offset_bottom = -288.0
+grow_horizontal = 0
+grow_vertical = 2
+script = ExtResource("3_meu12")
+OptionsButton = NodePath("")
+
+[node name="ColorRect" type="ColorRect" parent="Options" unique_id=1007366481]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Menu" type="ColorRect" parent="Options" unique_id=704042772]
+layout_mode = 0
+offset_left = -170.0
+offset_right = 35.0
+offset_bottom = 648.0
+
+[connection signal="mouse_entered" from="Options" to="Options" method="OnMouseEntered"]
+[connection signal="mouse_exited" from="Options" to="Options" method="OnMouseExited"]
